@@ -24,6 +24,7 @@
     "plugins": ["react", "prettier", "import"],
     "rules": {
             "indent": "off",
+            "implicit-arrow-linebreak": "off",
             "prettier/prettier": "error",
             "linebreak-style": [0, "unix"],
             "quotes": ["error", "single"],
@@ -31,6 +32,8 @@
             "react/react-in-jsx-scope": "off",
             "react/prop-types": 0,
             "max-len": "off",
+            "function-paren-newline": "off",
+            "comma-dangle": "off",
             "react/jsx-indent-props": "off",
             "react/jsx-indent" : "off",
             "object-curly-newline" : "off",

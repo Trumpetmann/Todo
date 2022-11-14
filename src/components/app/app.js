@@ -1,5 +1,6 @@
 /* eslint-disable no-plusplus */
-import './todo-app.css'
+/* eslint-disable react/sort-comp */
+import './app.css'
 import React, { Component } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 
@@ -7,48 +8,10 @@ import NewTaskForm from '../new-task-form'
 import TaskList from '../task-list'
 import Footer from '../footer'
 
-export default class TodoApp extends Component {
+export default class App extends Component {
   numId = 1
 
-  state = {
-    filter: 'All',
-
-    todoData: [
-      {
-        className: 'active',
-        description: 'Completed task',
-        done: false,
-        important: false,
-        id: this.numId++,
-        timeToCreate: new Date(),
-        timeToDistance: 'less than 5 seconds',
-        isEditing: false,
-      },
-      {
-        className: 'active',
-        description: 'Editing task',
-        done: false,
-        important: false,
-        id: this.numId++,
-        timeToCreate: new Date(),
-        timeToDistance: 'less than 5 seconds',
-        isEditing: false,
-      },
-      {
-        className: 'active',
-        description: 'Active task',
-        done: false,
-        important: false,
-        id: this.numId++,
-        timeToCreate: new Date(),
-        timeToDistance: 'less than 5 seconds',
-        isEditing: false,
-      },
-    ],
-  }
-
   createTodoItem = (description) => ({
-    className: 'active',
     description,
     done: false,
     important: false,
@@ -58,22 +21,29 @@ export default class TodoApp extends Component {
     isEditing: false,
   })
 
+  state = {
+    filter: 'All',
+
+    todoData: [
+      this.createTodoItem('Completed task'),
+      this.createTodoItem('Editing task'),
+      this.createTodoItem('Active task'),
+    ],
+  }
+
   clearCompleted = () => {
-    const { todoData } = this.state
-    const newArr = todoData.filter((item) => !item.done)
-    this.setState(() => ({
-      todoData: newArr,
+    this.setState(({ todoData }) => ({
+      todoData: todoData.filter((item) => !item.done),
     }))
   }
 
   refreshTimeToDistance = () => {
-    this.setState(() => {
-      const { todoData } = this.state
-      const newArr = todoData.map((el) => el)
-      newArr.forEach((item) => {
+    this.setState(({ todoData }) => {
+      const newArr = todoData.map((item) => {
         item.timeToDistance = formatDistanceToNow(item.timeToCreate, {
           includeSeconds: true,
         })
+        return item
       })
 
       return {
@@ -90,27 +60,28 @@ export default class TodoApp extends Component {
   addItem = (text) => {
     const newItem = this.createTodoItem(text)
     this.setState(({ todoData }) => ({
-      todoData: [...todoData.slice(), newItem],
+      todoData: [...todoData, newItem],
     }))
+    this.refreshTimeToDistance()
   }
 
   onEditing = (id) => {
-    this.setState(({ todoData }) => ({
-      todoData: this.toggleProperty(todoData, id, 'isEditing'),
+    this.setState(() => ({
+      todoData: this.toggleProperty(id, 'isEditing'),
     }))
   }
 
-  toggleProperty = (arr, id, propName) => {
+  toggleProperty = (id, propName) => {
     const { todoData } = this.state
     const idx = todoData.findIndex((el) => el.id === id)
     const oldItem = todoData[idx]
     const newItem = { ...oldItem, [propName]: !oldItem[propName] }
-    return [...arr.slice(0, idx), newItem, ...arr.slice(idx + 1)]
+    return [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)]
   }
 
   checkboxClick = (id) => {
-    this.setState(({ todoData }) => ({
-      todoData: this.toggleProperty(todoData, id, 'done'),
+    this.setState(() => ({
+      todoData: this.toggleProperty(id, 'done'),
     }))
   }
 
@@ -122,6 +93,21 @@ export default class TodoApp extends Component {
         todoData: newArray,
       }
     })
+    this.refreshTimeToDistance()
+  }
+
+  editTask = (id, newDescription) => {
+    this.setState(
+      ({ todoData }) => {
+        const idx = todoData.findIndex((el) => el.id === id)
+        const newItem = { ...todoData[idx], description: newDescription }
+        const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)]
+        return {
+          todoData: newArray,
+        }
+      },
+      () => this.onEditing(id)
+    )
   }
 
   onFilter = (filter) => {
@@ -132,11 +118,23 @@ export default class TodoApp extends Component {
 
   todoFilter = (filter) => {
     const { todoData } = this.state
+
     let result
 
-    if (filter === 'All') result = todoData
-    if (filter === 'Active') result = todoData.filter((item) => !item.done)
-    if (filter === 'Completed') result = todoData.filter((item) => item.done)
+    switch (filter) {
+      case 'All':
+        result = todoData
+        break
+      case 'Active':
+        result = todoData.filter((item) => !item.done)
+        break
+      case 'Completed':
+        result = todoData.filter((item) => item.done)
+        break
+      default:
+        result = todoData
+        break
+    }
 
     return result
   }
@@ -153,7 +151,8 @@ export default class TodoApp extends Component {
             onDeleted={this.deleteTask}
             checkboxClick={this.checkboxClick}
             onEditing={this.onEditing}
-            refreshTimeToDistance={this.refreshTimeToDistance}
+            editTask={this.editTask}
+            // refreshTimeToDistance={this.refreshTimeToDistance}
             changeDescription={this.changeDescription}
           />
           <Footer

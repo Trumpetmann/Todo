@@ -1,11 +1,11 @@
 import './task-list.css'
 import React from 'react'
-import PropTypes, { func, string } from 'prop-types'
+import PropTypes, { func } from 'prop-types'
 
 import Task from '../task'
 
 function TaskList(props) {
-  const { todos, onDeleted, onEditing, checkboxClick, description, refreshTimeToDistance } = props
+  const { todos, onDeleted, onEditing, editTask, checkboxClick } = props
   const elements = todos.map((el) => {
     const { id, ...propses } = el
 
@@ -13,10 +13,10 @@ function TaskList(props) {
       <Task
         onDeleted={() => onDeleted(id)}
         onEditing={() => onEditing(id)}
+        editTask={editTask}
         checkboxClick={() => checkboxClick(id)}
-        description={description}
-        refreshTimeToDistance={refreshTimeToDistance}
         propses={propses}
+        id={id}
         key={id}
       />
     )
@@ -55,8 +55,6 @@ TaskList.defaultProps = {
   onDeleted: () => {},
   onEditing: () => {},
   checkboxClick: () => {},
-  refreshTimeToDistance: () => {},
-  description: '',
 }
 
 TaskList.propTypes = {
@@ -64,8 +62,6 @@ TaskList.propTypes = {
   onDeleted: func,
   onEditing: func,
   checkboxClick: func,
-  refreshTimeToDistance: func,
-  description: string,
 }
 
 export default TaskList

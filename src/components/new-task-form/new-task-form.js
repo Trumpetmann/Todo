@@ -13,20 +13,18 @@ export default class NewTaskForm extends Component {
     })
   }
 
-  enterPress = (e) => {
-    if (e.key === 'Enter') this.onSubmit(e)
-  }
-
   onSubmit = (e) => {
-    e.preventDefault()
+    if (e.key === 'Enter') {
+      e.preventDefault()
 
-    const { description } = this.state
-    const { addItem } = this.props
+      const { description } = this.state
+      const { addItem } = this.props
 
-    if (description) addItem(description)
-    this.setState({
-      description: '',
-    })
+      if (description) addItem(description)
+      this.setState({
+        description: '',
+      })
+    }
   }
 
   render() {
@@ -39,7 +37,7 @@ export default class NewTaskForm extends Component {
           className="new-todo"
           placeholder="What needs to be done?"
           onChange={this.onLabelChange}
-          onKeyPress={this.enterPress}
+          onKeyDown={this.onSubmit}
           value={description}
         />
       </header>

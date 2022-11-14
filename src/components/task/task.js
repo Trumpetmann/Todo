@@ -3,17 +3,25 @@ import React, { Component } from 'react'
 import PropTypes, { func } from 'prop-types'
 
 export default class Task extends Component {
-  editionEnterPress = (e) => {
-    const { onEditing } = this.props
-    const { propses } = this.props
+  state = {
+    newDescription: '',
+  }
 
-    if (e.key === 'Enter') onEditing(propses.id)
+  editDescription = (description) => {
+    this.setState(() => ({
+      newDescription: description,
+    }))
+  }
+
+  editionEnterPress = (e) => {
+    const { editTask, id } = this.props
+    const { newDescription } = this.state
+
+    if (e.key === 'Enter') editTask(id, newDescription)
   }
 
   render() {
-    const { propses, checkboxClick, onEditing, onDeleted, intervalRefreshTime, refreshTimeToDistance } = this.props
-
-    setInterval(refreshTimeToDistance, intervalRefreshTime)
+    const { propses, checkboxClick, onEditing, onDeleted } = this.props
 
     if (propses.isEditing) propses.className = 'editing'
     if (propses.done) propses.className = 'completed'
@@ -25,7 +33,8 @@ export default class Task extends Component {
           type="text"
           className="edit"
           defaultValue={propses.description}
-          onKeyPress={(e) => this.editionEnterPress(e)}
+          onChange={(e) => this.editDescription(e.target.value)}
+          onKeyUp={(e) => this.editionEnterPress(e)}
         />
       ) : null
     return (
@@ -36,14 +45,8 @@ export default class Task extends Component {
             <span className="description">{propses.description}</span>
             <span className="created">{propses.timeToDistance}</span>
           </label>
-          <button type="button" aria-label="Edit" id="first-name" className="icon icon-edit" onClick={onEditing} />
-          <button
-            type="button"
-            aria-label="Destroy"
-            id="first-name"
-            className="icon icon-destroy"
-            onClick={onDeleted}
-          />
+          <button type="button" aria-label="Edit" className="icon icon-edit" onClick={onEditing} />
+          <button type="button" aria-label="Destroy" className="icon icon-destroy" onClick={onDeleted} />
         </div>
         {input}
       </li>
@@ -52,19 +55,17 @@ export default class Task extends Component {
 }
 
 Task.defaultProps = {
-  intervalRefreshTime: 5000,
   propses: {},
   onEditing: () => {},
-  refreshTimeToDistance: () => {},
+  // refreshTimeToDistance: () => {},
   checkboxClick: () => {},
   onDeleted: () => {},
 }
 
 Task.propTypes = {
-  intervalRefreshTime: PropTypes.number,
   onEditing: func,
   propses: PropTypes.instanceOf(Object),
-  refreshTimeToDistance: func,
+  // refreshTimeToDistance: func,
   checkboxClick: func,
   onDeleted: func,
 }
