@@ -66,9 +66,9 @@ export default class App extends Component {
   }
 
   onEditing = (id) => {
-    this.setState(() => ({
+    this.setState({
       todoData: this.toggleProperty(id, 'isEditing'),
-    }))
+    })
   }
 
   toggleProperty = (id, propName) => {
@@ -80,9 +80,9 @@ export default class App extends Component {
   }
 
   checkboxClick = (id) => {
-    this.setState(() => ({
+    this.setState({
       todoData: this.toggleProperty(id, 'done'),
-    }))
+    })
   }
 
   deleteTask = (id) => {
