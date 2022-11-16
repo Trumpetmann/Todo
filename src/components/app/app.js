@@ -1,5 +1,6 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable react/sort-comp */
+/* eslint-disable class-methods-use-this */
 import './app.css'
 import React, { Component } from 'react'
 import { formatDistanceToNow } from 'date-fns'
@@ -66,22 +67,27 @@ export default class App extends Component {
   }
 
   onEditing = (id) => {
-    this.setState({
-      todoData: this.toggleProperty(id, 'isEditing'),
+    this.setState(({ todoData }) => {
+      const newArr = [...todoData]
+      return {
+        todoData: this.toggleProperty(id, 'isEditing', newArr),
+      }
     })
   }
 
-  toggleProperty = (id, propName) => {
-    const { todoData } = this.state
-    const idx = todoData.findIndex((el) => el.id === id)
-    const oldItem = todoData[idx]
+  toggleProperty = (id, propName, arr) => {
+    const idx = arr.findIndex((el) => el.id === id)
+    const oldItem = arr[idx]
     const newItem = { ...oldItem, [propName]: !oldItem[propName] }
-    return [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)]
+    return [...arr.slice(0, idx), newItem, ...arr.slice(idx + 1)]
   }
 
   checkboxClick = (id) => {
-    this.setState({
-      todoData: this.toggleProperty(id, 'done'),
+    this.setState(({ todoData }) => {
+      const newArr = [...todoData]
+      return {
+        todoData: this.toggleProperty(id, 'done', newArr),
+      }
     })
   }
 
