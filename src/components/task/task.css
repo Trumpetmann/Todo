@@ -1,4 +1,11 @@
-
+.view {
+    display: flex;
+}
+.timer {
+    color: gray;
+    font-size: 13px;
+    padding-left: 10px;
+}
 .toggle-all {
     width: 1px;
     height: 1px;
@@ -30,6 +37,28 @@
 .toggle-all:checked + label:before {
     color: #737373;
 }
+
+.todo-list li .icon-pause,
+.todo-list li .icon-play {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+.todo-list li .icon-play {
+    font-size: 15px;
+    height: 18px;
+    width: 18px;
+}
+
+.icon-pause:after {
+    content: '⏸';
+}
+
+.icon-play:after {
+    content: '▶';
+}
+
 
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     .toggle-all,

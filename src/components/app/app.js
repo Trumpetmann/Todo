@@ -1,4 +1,5 @@
 /* eslint-disable no-plusplus */
+/* eslint-disable consistent-return */
 /* eslint-disable react/sort-comp */
 /* eslint-disable class-methods-use-this */
 import './app.css'
@@ -12,7 +13,7 @@ import Footer from '../footer'
 export default class App extends Component {
   numId = 1
 
-  createTodoItem = (description) => ({
+  createTodoItem = (description, min = 0, sec = 0) => ({
     description,
     done: false,
     important: false,
@@ -20,16 +21,64 @@ export default class App extends Component {
     timeToCreate: new Date(),
     timeToDistance: 'less than 5 seconds',
     isEditing: false,
+    minCount: min,
+    secCount: sec,
+    timer: false,
   })
 
   state = {
     filter: 'All',
 
     todoData: [
-      this.createTodoItem('Completed task'),
-      this.createTodoItem('Editing task'),
-      this.createTodoItem('Active task'),
+      this.createTodoItem('Completed task', 1, 0),
+      this.createTodoItem('Editing task', 1, 30),
+      this.createTodoItem('Active task', 2, 0),
     ],
+  }
+
+  onTimer = (id) => {
+    this.setState(({ todoData }) => {
+      const arr = [...todoData]
+      const idx = arr.findIndex((el) => el.id === id)
+      const oldItem = arr[idx]
+      const newItem = { ...oldItem, timer: true }
+      const newArr = [...arr.slice(0, idx), newItem, ...arr.slice(idx + 1)]
+      return {
+        todoData: newArr,
+      }
+    })
+  }
+
+  offTimer = (id) => {
+    this.setState(({ todoData }) => {
+      const arr = [...todoData]
+      const idx = arr.findIndex((el) => el.id === id)
+      const oldItem = arr[idx]
+      const newItem = { ...oldItem, timer: false }
+      const newArr = [...arr.slice(0, idx), newItem, ...arr.slice(idx + 1)]
+      return {
+        todoData: newArr,
+      }
+    })
+  }
+
+  updateTimer = (id) => {
+    this.setState(({ todoData }) => {
+      const idx = todoData.findIndex((el) => el.id === id)
+      const arr = [...todoData]
+      const item = arr[idx]
+      let sum = parseInt(item.minCount, 10) * 60 + parseInt(item.secCount, 10)
+
+      if (sum === 0) return
+
+      sum -= 1
+
+      const newItem = { ...item, minCount: Math.trunc(sum / 60), secCount: sum % 60 }
+
+      return {
+        todoData: [...arr.slice(0, idx), newItem, ...arr.slice(idx + 1)],
+      }
+    })
   }
 
   clearCompleted = () => {
@@ -58,8 +107,8 @@ export default class App extends Component {
     return todoData.filter((el) => !el.done).length
   }
 
-  addItem = (text) => {
-    const newItem = this.createTodoItem(text)
+  addItem = (text, min, sec) => {
+    const newItem = this.createTodoItem(text, min, sec)
     this.setState(({ todoData }) => ({
       todoData: [...todoData, newItem],
     }))
@@ -154,9 +203,12 @@ export default class App extends Component {
         <section className="main">
           <TaskList
             todos={this.todoFilter(filter)}
+            updateTimer={this.updateTimer}
             onDeleted={this.deleteTask}
             checkboxClick={this.checkboxClick}
             onEditing={this.onEditing}
+            onTimer={this.onTimer}
+            offTimer={this.offTimer}
             editTask={this.editTask}
             // refreshTimeToDistance={this.refreshTimeToDistance}
             changeDescription={this.changeDescription}
