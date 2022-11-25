@@ -30,8 +30,13 @@ export default class NewTaskForm extends Component {
 
   onSubmit = (e) => {
     e.preventDefault()
+    const { description, minCount, secCount } = this.state
+
+    if (!Number(minCount) || !Number(secCount)) return
+
+    if (!description || !minCount || !secCount) return
+
     if (('onSubmit', e.key === 'Enter')) {
-      const { description, minCount, secCount } = this.state
       const { addItem } = this.props
 
       if (description) addItem(description, minCount, secCount)

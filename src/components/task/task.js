@@ -1,4 +1,5 @@
 /* eslint-disable class-methods-use-this */
+/* eslint-disable react/destructuring-assignment */
 import './task.css'
 import React, { Component } from 'react'
 import PropTypes, { func } from 'prop-types'
@@ -6,19 +7,49 @@ import PropTypes, { func } from 'prop-types'
 export default class Task extends Component {
   state = {
     newDescription: '',
+    timer: false,
+    min: this.props.propses.minCount,
+    sec: this.props.propses.secCount,
   }
 
-  // interval = ''
-
-  componentDidUpdate(prevProps) {
-    const { propses, updateTimer } = this.props
-    if (propses.timer !== prevProps.propses.timer) {
-      if (propses.timer) this.interval = setInterval(updateTimer, 1000)
+  componentDidUpdate(prevProps, prevState) {
+    const { timer } = this.state
+    if (timer !== prevState.timer) {
+      if (timer) this.interval = setInterval(this.updateTimer, 1000)
     }
   }
 
   componentWillUnmount() {
     clearInterval(this.interval)
+  }
+
+  updateTimer = () => {
+    const { min, sec } = this.state
+    let sum = parseInt(min, 10) * 60 + parseInt(sec, 10)
+
+    if (sum === 0) return
+
+    sum -= 1
+
+    const newMin = Math.trunc(sum / 60)
+    const newSec = sum % 60
+
+    this.setState({
+      min: newMin,
+      sec: newSec,
+    })
+  }
+
+  offTimer = () => {
+    this.setState({
+      timer: false,
+    })
+  }
+
+  onTimer = () => {
+    this.setState({
+      timer: true,
+    })
   }
 
   editionEnterPress = (e) => {
@@ -29,9 +60,9 @@ export default class Task extends Component {
   }
 
   clearInterval = () => {
-    const { offTimer } = this.props
+    // const { offTimer } = this.props
     clearInterval(this.interval)
-    offTimer()
+    this.offTimer()
   }
 
   editDescription(description) {
@@ -41,7 +72,8 @@ export default class Task extends Component {
   }
 
   render() {
-    const { propses, checkboxClick, onEditing, onDeleted, onTimer } = this.props
+    const { propses, checkboxClick, onEditing, onDeleted } = this.props
+    const { min, sec } = this.state
 
     if (propses.isEditing) propses.className = 'editing'
     if (propses.done) propses.className = 'completed'
@@ -49,7 +81,7 @@ export default class Task extends Component {
 
     const timer = (
       <span>
-        {propses.minCount === '' ? 0 : propses.minCount}:{propses.secCount === '' ? 0 : propses.secCount}
+        {min === '' ? 0 : min}:{sec === '' ? 0 : sec}
       </span>
     )
 
@@ -70,7 +102,7 @@ export default class Task extends Component {
           <label htmlFor="input">
             <span className="description">{propses.description}</span>
             <div className="timer-container">
-              <button type="button" aria-label="Play" className="icon icon-play" onClick={onTimer} />
+              <button type="button" aria-label="Play" className="icon icon-play" onClick={this.onTimer} />
               <button type="button" aria-label="Pause" className="icon icon-pause" onClick={this.clearInterval} />
               <span className="timer">{timer}</span>
             </div>
