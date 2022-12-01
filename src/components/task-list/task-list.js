@@ -8,7 +8,6 @@ function TaskList(props) {
   const { todos, onDeleted, onEditing, editTask, checkboxClick } = props
   const elements = todos.map((el) => {
     const { id, ...propses } = el
-
     return (
       <Task
         onDeleted={() => onDeleted(id)}
@@ -21,7 +20,6 @@ function TaskList(props) {
       />
     )
   })
-
   return <ul className="todo-list">{elements}</ul>
 }
 

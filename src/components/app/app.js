@@ -150,7 +150,6 @@ export default class App extends Component {
 
   render() {
     const { filter } = this.state
-
     return (
       <section className="todoapp">
         <NewTaskForm addItem={this.addItem} />

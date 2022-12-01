@@ -34,8 +34,6 @@ export default class NewTaskForm extends Component {
 
     if (!Number(minCount) || !Number(secCount)) return
 
-    if (!description || !minCount || !secCount) return
-
     if (('onSubmit', e.key === 'Enter')) {
       const { addItem } = this.props
 
@@ -62,6 +60,7 @@ export default class NewTaskForm extends Component {
             onChange={this.onLabelChange}
             onKeyUp={this.onSubmit}
             value={description}
+            required
           />
           <input
             className="new-todo-form__timer"
@@ -69,7 +68,7 @@ export default class NewTaskForm extends Component {
             onChange={this.onMinChange}
             onKeyUp={this.onSubmit}
             placeholder="Min"
-            autoFocus
+            required
           />
           <input
             className="new-todo-form__timer"
@@ -77,7 +76,7 @@ export default class NewTaskForm extends Component {
             onChange={this.onSecChange}
             onKeyUp={this.onSubmit}
             placeholder="Sec"
-            autoFocus
+            required
           />
         </form>
       </header>

@@ -33,7 +33,6 @@ export default class Task extends Component {
 
     const newMin = Math.trunc(sum / 60)
     const newSec = sum % 60
-
     this.setState({
       min: newMin,
       sec: newSec,
@@ -43,6 +42,8 @@ export default class Task extends Component {
   offTimer = () => {
     this.setState({
       timer: false,
+      min: this.props.propses.minCount,
+      sec: this.props.propses.secCount,
     })
   }
 
@@ -60,7 +61,6 @@ export default class Task extends Component {
   }
 
   clearInterval = () => {
-    // const { offTimer } = this.props
     clearInterval(this.interval)
     this.offTimer()
   }
@@ -95,6 +95,7 @@ export default class Task extends Component {
           onKeyUp={(e) => this.editionEnterPress(e)}
         />
       ) : null
+
     return (
       <li className={propses.className}>
         <div className="view">
